@@ -1,0 +1,49 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.kaiwasabi.privacyplus.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "AbstractSignEditScreenMixin",
+    "AnvilScreenMixin",
+    "BossHealthOverlayAccessor",
+    "ChatComponentHideMixin",
+    "ChatComponentMixin",
+    "ChatListenerMixin",
+    "ChatScreenMixin",
+    "ClientCommonPacketListenerImplMixin",
+    "ClientConfigurationPacketListenerImplMixin",
+    "ClientHandshakePacketListenerImplMixin",
+    "ClientPacketListenerMixin",
+    "ClientSuggestionProviderMixin",
+    "ClientTelemetryManagerMixin",
+    "CommandSuggestionsMixin",
+    "ConfirmLinkScreenMixin",
+    "ConfirmScreenAccessor",
+    "ConnectScreenMixin",
+    "ConnectionMixin",
+    "CrashReportMixin",
+    "DirectJoinServerScreenMixin",
+    "DownloadedPackSourceMixin",
+    "HttpUtilMixin",
+    "HudMixin",
+    "JoinMultiplayerScreenMixin",
+    "LanguageManagerMixin",
+    "MinecraftServerMixin",
+    "OnlineServerEntryMixin",
+    "OptionsMixin",
+    "PauseScreenMixin",
+    "ScreenMixin",
+    "ServerNameResolverMixin",
+    "ServerSelectionListMixin",
+    "TitleScreenMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

@@ -1,0 +1,71 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.fabricmc.fabric-loom'
+}
+dependencies {
+    minecraft("com.mojang:minecraft:${minecraft_version}")
+    implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
+    // No Fabric API on purpose: fewer moving parts, and nothing extra announced to servers.
+    // Add it (and to fabric.mod.json "depends") once a feature actually needs it.
+}
+
+// Dev-only self-test mod, never part of the release jar: ./gradlew :fabric:runSelftest
+sourceSets {
+    devtest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        "${mod_id}_devtest" {
+            sourceSet sourceSets.devtest
+        }
+    }
+    runs {
+        selftest {
+            client()
+            setConfigName('Fabric Selftest')
+            runDir('runs/selftest')
+            source(sourceSets.devtest)
+            vmArg('-Dprivacyplus.selftest.server=127.0.0.1:25599')
+        }
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('runs/client')
+            // ./gradlew :fabric:runClient -PjoinServer=localhost:25565 connects straight to a server
+            if (project.hasProperty('joinServer')) {
+                programArgs('--quickPlayMultiplayer', project.property('joinServer'))
+            }
+        }
+    }
+}
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+    configurations.named(variant) {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named(variant) {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
+            }
+        }
+    }
+}

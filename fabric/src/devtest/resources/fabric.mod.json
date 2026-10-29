@@ -1,0 +1,15 @@
+{
+    "schemaVersion": 1,
+    "id": "privacyplus_devtest",
+    "version": "0",
+    "name": "PrivacyPlus self-test (dev only)",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "org.kaiwasabi.privacyplus.devtest.SelfTest"
+        ]
+    },
+    "depends": {
+        "privacyplus": "*"
+    }
+}

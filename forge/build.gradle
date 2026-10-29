@@ -1,0 +1,41 @@
+plugins {
+    id 'multiloader-loader'
+    // Declared here rather than in the root build so it doesn't share a classloader with Loom/ModDevGradle
+    id 'net.minecraftforge.gradle' version '7.0.40'
+}
+
+minecraft {
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('runs/client')
+            // Mixin reads its configs from the jar manifest in production; dev runs need them passed explicitly
+            args "--mixin.config=${mod_id}.mixins.json", "--mixin.config=${mod_id}.forge.mixins.json"
+            // Mojang's manifest requires this on macOS (SDL must own the main thread); FG7's dev launcher omits it
+            if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+                jvmArgs '-XstartOnFirstThread'
+            }
+            // ./gradlew :forge:runClient -PjoinServer=localhost:25565 connects straight to a server
+            if (project.hasProperty('joinServer')) {
+                args '--quickPlayMultiplayer', project.property('joinServer')
+            }
+        }
+        register('client')
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+}
+
+jar {
+    manifest {
+        attributes['MixinConfigs'] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+    }
+}
